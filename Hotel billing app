@@ -1,0 +1,96 @@
+import React, { useState } from 'react';
+
+const BillingApp = () => {
+  const [rooms, setRooms] = useState([
+    { id: 1, type: 'Single', price: 100, quantity: 0 },
+    { id: 2, type: 'Double', price: 150, quantity: 0 },
+    { id: 3, type: 'Suite', price: 250, quantity: 0 },
+  ]);
+
+  const [services, setServices] = useState([
+    { id: 1, type: 'Breakfast', price: 10, quantity: 0 },
+    { id: 2, type: 'Lunch', price: 20, quantity: 0 },
+    { id: 3, type: 'Dinner', price: 30, quantity: 0 },
+  ]);
+
+  const [total, setTotal] = useState(0);
+
+  const handleRoomQuantityChange = (id: number, quantity: number) => {
+    const updatedRooms = rooms.map((room) => {
+      if (room.id === id) {
+        return { ...room, quantity };
+      }
+      return room;
+    });
+    setRooms(updatedRooms);
+    calculateTotal(updatedRooms, services);
+  };
+
+  const handleServiceQuantityChange = (id: number, quantity: number) => {
+    const updatedServices = services.map((service) => {
+      if (service.id === id) {
+        return { ...service, quantity };
+      }
+      return service;
+    });
+    setServices(updatedServices);
+    calculateTotal(rooms, updatedServices);
+  };
+
+  const calculateTotal = (rooms: any[], services: any[]) => {
+    const roomTotal = rooms.reduce((acc, room) => acc + room.price * room.quantity, 0);
+    const serviceTotal = services.reduce((acc, service) => acc + service.price * service.quantity, 0);
+    setTotal(roomTotal + serviceTotal);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Hotel Billing App</h1>
+      <div className="flex flex-col md:flex-row justify-between mb-4">
+        <div className="w-full md:w-1/2 p-4 bg-gray-100 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Rooms</h2>
+          {rooms.map((room) => (
+            <div key={room.id} className="flex justify-between mb-4">
+              <span className="text-lg">{room.type}</span>
+              <div className="flex items-center">
+                <span className="text-lg mr-4">${room.price}</span>
+                <input
+                  type="number"
+                  value={room.quantity}
+                  onChange={(e) => handleRoomQuantityChange(room.id, parseInt(e.target.value))}
+                  className="w-12 h-8 pl-2 text-lg border border-gray-400 rounded-lg"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="w-full md:w-1/2 p-4 bg-gray-100 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Services</h2>
+          {services.map((service) => (
+            <div key={service.id} className="flex justify-between mb-4">
+              <span className="text-lg">{service.type}</span>
+              <div className="flex items-center">
+                <span className="text-lg mr-4">${service.price}</span>
+                <input
+                  type="number"
+                  value={service.quantity}
+                  onChange={(e) => handleServiceQuantityChange(service.id, parseInt(e.target.value))}
+                  className="w-12 h-8 pl-2 text-lg border border-gray-400 rounded-lg"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex justify-between mb-4">
+        <span className="text-2xl font-bold">Total:</span>
+        <span className="text-2xl font-bold">${total}</span>
+      </div>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+        Checkout
+      </button>
+    </div>
+  );
+};
+
+export default BillingApp;
